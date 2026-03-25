@@ -16,6 +16,7 @@ type TxFactory interface {
 // TxFactoryFunc is a function adapter for [TxFactory].
 type TxFactoryFunc func(ctx context.Context) (Tx, error)
 
+// Begin implements [TxFactory] by calling the function itself.
 func (f TxFactoryFunc) Begin(ctx context.Context) (Tx, error) { return f(ctx) }
 
 // UnitOfWork orchestrates transactional execution.

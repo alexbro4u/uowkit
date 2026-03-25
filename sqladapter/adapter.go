@@ -18,6 +18,7 @@ func NewTxFactory(db *sql.DB, opts *sql.TxOptions) *TxFactory {
 	return &TxFactory{db: db, opts: opts}
 }
 
+// Begin implements [uow.TxFactory] by starting a new [*sql.Tx].
 func (f *TxFactory) Begin(ctx context.Context) (uow.Tx, error) {
 	sqlTx, err := f.db.BeginTx(ctx, f.opts)
 	if err != nil {

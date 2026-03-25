@@ -6,13 +6,13 @@ import (
 )
 
 type config struct {
-	maxAttempts   int
 	retryOn       func(error) bool
 	logger        *slog.Logger
 	beforeBegin   []func(ctx context.Context) context.Context
 	beforeCommit  []func(ctx context.Context, tx Tx) error
 	afterCommit   []func(ctx context.Context)
 	afterRollback []func(ctx context.Context, err error)
+	maxAttempts   int
 }
 
 func defaultConfig() config {

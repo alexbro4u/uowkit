@@ -253,13 +253,16 @@ func TestDo_BeforeBeginHook(t *testing.T) {
 		}),
 	)
 
-	_ = u2.Do(context.Background(), func(t uow.Tx) error { return nil })
+	err := u2.Do(context.Background(), func(t uow.Tx) error { return nil })
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 	if got != "enriched" {
 		t.Fatalf("expected context to be enriched, got %q", got)
 	}
 
 	// Also ensure the basic hook doesn't break the flow.
-	err := u.Do(context.Background(), func(t uow.Tx) error { return nil })
+	err = u.Do(context.Background(), func(t uow.Tx) error { return nil })
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -326,7 +329,10 @@ func TestDo_AfterRollbackHook(t *testing.T) {
 		}),
 	)
 
-	_ = u.Do(context.Background(), func(t uow.Tx) error { return bizErr })
+	err := u.Do(context.Background(), func(t uow.Tx) error { return bizErr })
+	if err == nil {
+		t.Fatal("expected error")
+	}
 
 	if !errors.Is(hookErr, bizErr) {
 		t.Fatalf("expected after-rollback hook to receive business error, got %v", hookErr)
@@ -357,7 +363,10 @@ func TestDo_WithLogger(t *testing.T) {
 	f := &mockFactory{tx: &mockTx{}}
 	u := uow.New(f, uow.WithLogger(logger))
 
-	_ = u.Do(context.Background(), func(t uow.Tx) error { return nil })
+	err := u.Do(context.Background(), func(t uow.Tx) error { return nil })
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	output := buf.String()
 	if !strings.Contains(output, "beginning transaction") {
